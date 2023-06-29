@@ -1,0 +1,42 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: update-manifest
+  namespace: globex
+spec:
+  description: This task updates the manifest for the current application to point
+    to the image tag created with the short commit.
+  params:
+  - description: Used to tag the built image.
+    name: image
+    type: string
+  - default: main
+    description: Target branch to push to
+    name: target-branch
+    type: string
+  - default: Tekton Pipeline
+    description: Git user name for performing the push operation.
+    name: git_user_name
+    type: string
+  - default: tekton@tekton.com
+    description: Git user email for performing the push operation.
+    name: git_user_email
+    type: string
+  - description: File in which the image configuration is stored.
+    name: configuration_file
+    type: string
+  - description: Repo in which the image configuration is stored.
+    name: repository
+    type: string
+  steps:
+  - image: alpine/git:latest
+    name: git
+    script: "# Setting up the git config.\ngit config --global user.email \"$(params.git_user_email)\"\ngit
+      config --global user.name \"$(params.git_user_name)\"\n# Checkout target branch
+      to avoid the detached HEAD state\nTMPDIR=$(mktemp -d)\ncd $TMPDIR\ngit clone
+      $(params.repository)\ncd securing-software-supply-chain\ngit checkout $(params.target-branch)\n#
+      Set to the short commit value passed as parameter.\n# Notice the enclosing \"
+      to keep it as a string in the resulting YAML.\nIMAGE=\\\"$(params.image)\\\"\nsed
+      -i \"s#\\(.*value:\\s*\\).*#\\1 ${IMAGE}#\" $(params.configuration_file)\ngit
+      add $(params.configuration_file)\ngit commit -m \"Automatically updated manifest
+      to point to image tag $IMAGE\"\ngit push origin $(params.target-branch)      \n"
