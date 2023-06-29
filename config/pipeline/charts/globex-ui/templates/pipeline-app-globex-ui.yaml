@@ -50,7 +50,7 @@ spec:
         --label=io.openshift.build.commit.id='$(params.COMMIT_SHA)' --label=io.openshift.build.commit.message='$(params.COMMIT_MESSAGE)'
         --label=io.openshift.build.commit.ref='$(params.GIT_REF)' --ulimit=nofile=4096:4096
     - name: IMAGE
-      value: $(params.IMAGE_REPO):$(params.IMAGE_TAG)
+      value: image-registry.openshift-image-registry.svc:5000/software-supply-chain/globex-ui:$(params.IMAGE_TAG)
     retries: 1
     runAfter:
     - fetch-source
