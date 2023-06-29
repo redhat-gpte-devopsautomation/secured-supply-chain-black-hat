@@ -1,8 +1,7 @@
-apiVersion: tekton.dev/v1
+apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: update-manifest
-  namespace: globex
 spec:
   description: This task updates the manifest for the current application to point
     to the image tag created with the short commit.

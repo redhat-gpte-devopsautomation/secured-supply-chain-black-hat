@@ -1,8 +1,7 @@
-apiVersion: tekton.dev/v1
+apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: buildah-no-sign
-  namespace: globex
 spec:
   description: 'Buildah task builds source into a container image and then pushes
     it to a container registry.  Does not set result parameters to bypass signing.
